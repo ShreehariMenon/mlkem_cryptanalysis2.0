@@ -2,8 +2,8 @@
 mlkem_resnet_attack.py
 ======================
 Black-Box AI Attack on ML-KEM-512 using ResNet CNN
-Dataset  : 20,000 NIST KAT vectors (ML-KEM-512)
-Split    : 16,000 train  /  4,000 test
+Dataset  : 12,000 NIST KAT vectors (ML-KEM-512)
+Split    : 10,000 train  /  2,000 test
 Model    : Residual CNN (inspired by Benamira et al., EUROCRYPT 2021)
 Task     : Given (ek, ct) → predict shared secret ss
 Question : Can AI learn to decrypt ML-KEM without the private key?
