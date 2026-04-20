@@ -55,8 +55,6 @@ PQCkemKAT_1632.rsp
 * Optimizer: Adam 
 * Epochs: 25 
 
---- 
-
 ## 🧪 Experiment Setup 
 * Train on 10,000 samples 
 * Evaluate on 2,000 unseen samples 
@@ -73,8 +71,6 @@ PQCkemKAT_1632.rsp
 | Random Baseline | **0.003906 (1/256)** | 
 | Improvement | **~1.09× (noise level)** | 
 | Unseen Input | **1 / 32 bytes correct (coincidence)** | 
-
---- 
 
 ## 🔍 Key Observation 
 The model converges to predicting:
@@ -97,7 +93,6 @@ Reason:
 2. **SHAKE-256 hashing** → output is pseudorandom 
 3. **IND-CCA2 security** → outputs indistinguishable from random 
 
---- 
 ## 📉 Comparison with Literature 
 | Work | Target | Result | 
 | -------------------- | ---------------- | ------------------ | 
@@ -111,7 +106,6 @@ Reason:
 python3 mlkem_resnet_attack.py
 ```
 
---- 
 ## 📁 Project Files 
 * mlkem_resnet_attack.py — full experiment 
 * dataset_mlkem512_12000.rsp — dataset 
@@ -119,7 +113,6 @@ python3 mlkem_resnet_attack.py
 * mlkem512_presentation.pptx — presentation 
 * attack_report.txt — logs/output 
 
---- 
 ## 🧠 Key Takeaway 
 > Deep learning can exploit **structure** — but ML-KEM has none. 
 
@@ -130,14 +123,12 @@ python3 mlkem_resnet_attack.py
 * Polynomial / NTT-domain representations 
 * Side-channel + ML hybrid attacks 
 
---- 
 ## 📚 References 
 * NIST FIPS 203 (ML-KEM) 
 * Gohr (CRYPTO 2019) 
 * Benamira et al. (EUROCRYPT 2021) 
 * SALSA (NeurIPS 2022) 
 
---- 
 ## 👨‍💻 Author
  Shreehari Menon B.Tech CSE (Design) Research Project — 2026
 
