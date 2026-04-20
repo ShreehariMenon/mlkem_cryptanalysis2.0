@@ -22,24 +22,36 @@ Recent work has shown that neural networks can:
 📁 Included in repo:
 dataset_mlkem512_12000.rsp (~76MB)
 
-## ⚙️ Dataset Generation (Reproducibility) 
-Dataset is generated using official Kyber reference:
+## ⚙️ Dataset Generation
+
+This project uses **NIST ML-KEM-512 Known Answer Test (KAT) vectors** generated from the official Kyber reference implementation.
+
+### 🔹 Option 1 — Use Included Dataset 
+The dataset is already provided:
+
+dataset_mlkem512_12000.rsp (~76MB)
+
+### 🔹 Option 2 — Reproduce Dataset (From Source)
+
+Clone the official Kyber repository:
+
 ```bash
 git clone https://github.com/pq-crystals/kyber
 cd kyber/ref/nistkat
 ```
-Modify:
+Modify the generator:
 ```c
-#define KATNUM 12000
+#define KATNUM 12000   // default = 100
 ```
-Compile + run:
+Compile and run:
 ```bash
 gcc -o PQCgenKAT_kem512 PQCgenKAT_kem.c -lcrypto
 ./PQCgenKAT_kem512
 ```
 Output:
+```
 PQCkemKAT_1632.rsp
-
+```
 ---
 
 ## 🧠 Model 
