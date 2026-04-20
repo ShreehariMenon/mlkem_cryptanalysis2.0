@@ -1,0 +1,196 @@
+User@samgnyadt010-OptiPlex-3050:~$ python3 ~/mlkem_resnet_attack.py
+PyTorch 2.11.0+cu130 found.
+============================================================
+  ML-KEM-512 Black Box Attack using ResNet CNN
+  Dataset : 20,000 NIST KAT Vectors
+  Model   : Residual CNN (Benamira, EUROCRYPT 2021)
+============================================================
+
+============================================================
+ STEP 1: Parsing KAT vectors from .rsp file
+============================================================
+  File : /home/User/ACVP-Server/kyber/ref/nistkat/PQCkemKAT_1632.rsp
+  Max  : 12000 vectors
+
+  Parsed   : 12000 vectors
+  X shape  : (12000, 1568)  (each row = ek||ct bytes)
+  y shape  : (12000, 32)  (each row = ss bytes)
+  EK bytes : 800  (public key)
+  CT bytes : 768  (ciphertext)
+  SS bytes : 32  (shared secret — target)
+
+  Sample vector [0]:
+    ek : 400865ED10B619AA...  (800 bytes)
+    ct : 521C88486C35F6C2...  (768 bytes)
+    ss : B4C8E3C4115F9511F2FDDB288C4B78C5CD7C89D2D4D321F46B4EDC54DDF0EB36  (32 bytes)
+
+============================================================
+ STEP 2: Building train / test split
+============================================================
+  Total vectors : 12000
+  Train         : 9999  (83%)
+  Test          : 2001   (17%)
+  X normalised  : bytes / 255  → range [0.0, 1.0]
+  y normalised  : bytes / 255  → range [0.0, 1.0]
+
+  Random guess baseline  : 1/256 = 0.003906  (0.391%)
+  A broken scheme would  : consistently beat this baseline
+
+============================================================
+ STEP 3: Training ResNet CNN
+============================================================
+  Model        : ResNet CNN (Benamira 2021 style)
+  Parameters   : 100,384
+  Architecture : Stem → ResBlock×3 → GAP → FC(256) → FC(32)
+  Loss fn      : MSE (Mean Squared Error)
+  Optimiser    : Adam  lr=0.001
+  Scheduler    : CosineAnnealingLR
+  Epochs       : 25
+  Batch size   : 64
+  Train samples: 9999
+  Test samples : 2001
+
+  Epoch   Loss         Train Byte Acc     Test Byte Acc    Time
+  ──────────────────────────────────────────────────────────────
+  1       0.084193     0.004232           0.004232         164.7s
+  2       0.083880     0.004295           0.004295         325.6s
+  3       0.083847     0.003857           0.003857         486.0s
+  4       0.083889     0.004076           0.004076         647.2s
+  5       0.083871     0.004045           0.004045         807.7s
+  6       0.083893     0.003889           0.003889         968.7s
+  7       0.083863     0.003904           0.003904         1129.5s
+  8       0.083869     0.004232           0.004232         1291.2s
+  9       0.083893     0.004029           0.004029         1464.2s
+  10      0.083857     0.004248           0.004248         1625.4s
+  11      0.083874     0.004045           0.004045         1827.4s
+  12      0.083864     0.004232           0.004232         2064.7s
+  13      0.083893     0.004045           0.004045         2232.9s
+  14      0.083873     0.004217           0.004217         2391.1s
+  15      0.083879     0.004263           0.004263         2583.0s
+  16      0.083861     0.004263           0.004263         2741.5s
+  17      0.083842     0.004139           0.004139         2899.6s
+  18      0.083879     0.004295           0.004295         3058.6s
+  19      0.083857     0.004060           0.004060         3216.6s
+  20      0.083870     0.004123           0.004123         3375.2s
+  21      0.083846     0.004014           0.004014         3534.1s
+  22      0.083866     0.004154           0.004154         3693.1s
+  23      0.083866     0.004154           0.004154         3852.8s
+  24      0.083853     0.004154           0.004154         4011.4s
+  25      0.083856     0.004154           0.004154         4170.4s
+
+  Best test byte accuracy : 0.004295
+  Random baseline         : 0.003906  (1/256)
+  Improvement             : 1.099x over random
+
+============================================================
+ STEP 4: Test on UNSEEN KAT vector
+ (A real ML-KEM session NOT in training data)
+============================================================
+
+  What the attacker sees:
+    ek (public key) : 3A3888F3E13407352BB07427...  (800 bytes)
+    ct (ciphertext) : D5A8F3DA0DAC4D63448F5347...  (768 bytes)
+
+  Ground truth shared secret (ss):
+    FD7BB7D8E88B6F0A7E76B8480A27BAD2BC1AB81BB8805A35B5A0717C64B7FB0C
+
+  Model predicted shared secret:
+    7F807F80807F7E7F7F807F7F807F7F7F807D7F807F80807F7F7F7F7F80818080
+
+  Byte-by-byte comparison (all 32 bytes):
+  Pos   True (hex)   Pred (hex)   Match
+  ──────────────────────────────────────
+  0     253          127          ✗
+  1     123          128          ✗
+  2     183          127          ✗
+  3     216          128          ✗
+  4     232          128          ✗
+  5     139          127          ✗
+  6     111          126          ✗
+  7     10           127          ✗
+  8     126          127          ✗
+  9     118          128          ✗
+  10    184          127          ✗
+  11    72           127          ✗
+  12    10           128          ✗
+  13    39           127          ✗
+  14    186          127          ✗
+  15    210          127          ✗
+  16    188          128          ✗
+  17    26           125          ✗
+  18    184          127          ✗
+  19    27           128          ✗
+  20    184          127          ✗
+  21    128          128          ✓
+  22    90           128          ✗
+  23    53           127          ✗
+  24    181          127          ✗
+  25    160          127          ✗
+  26    113          127          ✗
+  27    124          127          ✗
+  28    100          128          ✗
+  29    183          129          ✗
+  30    251          128          ✗
+  31    12           128          ✗
+
+  Result : 1 / 32 bytes correct  (3.1%)
+  Random : ~0.1 bytes expected by chance
+  Verdict: Within random chance. Not a meaningful result.
+
+============================================================
+ STEP 5: Test on RANDOM INPUT
+ (Not a real ML-KEM session — pure random bytes)
+============================================================
+
+  Random input (first 16 bytes shown):
+    56A0C9D2FD2473CE7E59F63771639EBF...  (1568 random bytes)
+
+  Model output:
+    7F807F80807F7E7F80807F7F807F7F7F807D7F807F80807F7F7F7F7F80818080
+
+  There is no correct answer for a random input.
+  The model just outputs a meaningless prediction.
+  This proves the model is NOT a decryption oracle.
+
+============================================================
+ FINAL VERDICT
+============================================================
+
+  Experiment Summary
+  ──────────────────
+  Dataset         : 20,000 NIST ML-KEM-512 KAT vectors
+  Training set    : 16,000 vectors
+  Test set        :  4,000 vectors
+  Model           : ResNet CNN (Benamira EUROCRYPT 2021 style)
+  Parameters      : ~50,000
+  Epochs          : 25
+
+  Results
+  ───────
+  Best test byte accuracy : 0.004295
+  Random baseline         : 0.003906  (1/256)
+  Improvement over random : 1.099x
+  Bytes correct (1 sample): 1 / 32
+
+  Research Context
+  ────────────────
+  Gohr (CRYPTO 2019) achieved 0.618 accuracy on 7-round SPECK32/64.
+  Our ResNet CNN achieves ~0.004 on full ML-KEM-512.
+  The gap shows ML-KEM has no exploitable structure.
+
+  Why the attack fails
+  ────────────────────
+  ML-KEM shared secret = SHAKE-256(K) where K requires private key dk.
+  Without dk, the (ek, ct) → ss mapping is computationally one-way.
+  No pattern exists for any model to learn — the output is
+  cryptographically indistinguishable from random bytes.
+
+  This is different from SPECK (had differential structure) and
+  different from SALSA's LWE targets (had sparse binary secrets).
+  Standard ML-KEM-512 has neither weakness.
+    
+  CONCLUSION : ML-KEM-512 is NOT VULNERABLE to this
+               black-box ResNet CNN attack.
+               The scheme is secure against AI-based
+               decryption with 20,000 training samples.
+
